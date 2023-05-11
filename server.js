@@ -1,4 +1,6 @@
 const express = require("express");
+const Fabric = require("./services/fabric");
+
 const app = express();
 const port = 5000;
 

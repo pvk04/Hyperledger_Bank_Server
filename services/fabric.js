@@ -4,50 +4,28 @@ const FabricCAServices = require("fabric-ca-client");
 
 module.exports = class Fabric {
   static getConnectionProfile(org) {
-    // build an in memory object with the network configuration (also known as a connection profile)
-    // парсит файл соединения и возвращает объект
-    console.log(process.cwd());
     return JSON.parse(readFileSync(`./gateway/connection-${org}.json`));
   }
 
-  static buildCAClient(org) {
-    // build an instance of the fabric ca services client based on
-    // the information in the network configuration
-    const connectionProfile = this.getConnectionProfile(org); // получаем объект соединения
-    const caInfo =
+  static createCA(org) {
+    const connectionProfile = this.getConnectionProfile(org);
+
+    const ca =
       connectionProfile.certificateAuthorities[`ca.${org}.example.com`];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
+    const rootCA = ca.tlsCACerts.pem;
 
     return new FabricCAServices(
-      caInfo.url,
+      ca.url,
       {
-        trustedRoots: caTLSCACerts,
+        trustedRoots: rootCA,
         verify: false,
       },
-      caInfo.name
+      ca.name
     );
   }
 
-  static async buildWallet(login, org) {
-    return await Wallets.newFileSystemWallet(`./wallets/${org}-${login}`);
-  }
-
-  static async getAdmin(org) {
-    const wallet = await this.buildWallet("admin", org);
-    return await wallet.get(wallet);
-  }
-
-  static async getAdminIdentity(org) {
-    const wallet = this.buildWallet("admin", org);
-    const adminIdentity = await wallet.get("admin");
-    if (!adminIdentity) {
-      return new Error();
-    }
-    const provider = (await wallet)
-      .getProviderRegistry()
-      .getProvider(adminIdentity.type);
-
-    return await provider.getUserContext(adminIdentity, "admin");
+  static async createWallet(org, login) {
+    return await Wallets.newFileSystemWallet(`./wallet/${org}-${login}`);
   }
 
   static async createGateway(wallet, login, org) {
@@ -65,23 +43,41 @@ module.exports = class Fabric {
     return gateway;
   }
 
-  static async createIdentity(org, enrollment) {
-    const mspId = `${org[0].toUpperCase()}${org.slice(1)}MSP`;
+  static async getAdmin(org) {
+    const wallet = await this.createWallet(org, "admin");
+    return await wallet.get(wallet);
+  }
+
+  static createIdentity(org, enrollment) {
+    const msp = `${org[0].toUpperCase()}${org.slice(1)}MSP`;
     return {
       credentials: {
-        certficate: enrollment.certificate,
+        certificate: enrollment.certificate,
         privateKey: enrollment.key.toBytes(),
       },
-      mspId,
+      mspId: msp,
       type: "X.509",
     };
   }
 
-  static async registerIdentity(login, password = "0000", org = "org1") {
+  static async getAdminIdentity(org) {
+    const wallet = await this.createWallet(org, "admin");
+
+    const adminIdentity = await wallet.get("admin");
+
+    const provider = wallet
+      .getProviderRegistry()
+      .getProvider(adminIdentity.type);
+    const admin = await provider.getUserContext(adminIdentity, "admin");
+
+    return admin;
+  }
+
+  static async registerIdentity(login, password, org = "org1") {
     try {
       const admin = await this.getAdminIdentity(org);
 
-      const ca = this.buildCAClient(org);
+      const ca = this.createCA(org);
       await ca.register(
         {
           enrollmentID: login,
@@ -98,7 +94,7 @@ module.exports = class Fabric {
 
       const identity = this.createIdentity(org, enrollment);
 
-      const wallet = await this.buildWallet(login, org);
+      const wallet = await this.createWallet(org, login);
       await wallet.put(login, identity);
     } catch (e) {
       console.log(e);
@@ -107,18 +103,19 @@ module.exports = class Fabric {
   }
 
   static async loginIdentity(login, password, org = "org1") {
-    const caClient = this.buildCAClient(org);
+    const ca = this.createCA(org);
     const enrollment = await ca.enroll({
       enrollmentSecret: password,
       enrollmentID: login,
     });
-    const wallet = await this.buildWallet(login, org);
+    const wallet = await this.createWallet(org, login);
     const identity = this.createIdentity(org, enrollment);
     await wallet.put(login, identity);
   }
 
   static async getContract(gateway, channelName, chaincode, contract) {
     const channel = await gateway.getNetwork(channelName);
+
     return await channel.getContract(chaincode, contract);
   }
 };

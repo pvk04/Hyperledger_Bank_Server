@@ -1,8 +1,13 @@
 const express = require("express");
 const Fabric = require("./services/fabric");
+const { PORT } = require("./configs/index");
 
 const app = express();
-const port = 5000;
 
 app.get("/", (req, res) => res.send("Hello World!"));
-app.listen(port, () => console.log(`SERVER RUNNING ON PORT: ${port}`));
+app.listen(PORT, async () => {
+  console.log(`SERVER RUNNING ON PORT: ${PORT}`);
+  Fabric.loginIdentity("admin", "adminpw", "org1");
+  const wallet = await Fabric.createWallet("org1", "admin");
+  const gateway = await Fabric.createGateway(wallet, "admin", "org1");
+});

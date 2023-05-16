@@ -3,9 +3,8 @@ const { UserServices } = require("../services");
 module.exports = class UserControllers {
   static async login(req, res, next) {
     try {
-      const { login, password } = req.body;
-
-      const user = await UserServices.login(login, password);
+      const { login, password, org } = req.body;
+      const user = await UserServices.login(login, password, org);
 
       res.json(user);
     } catch (e) {

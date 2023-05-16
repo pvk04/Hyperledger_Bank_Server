@@ -9,12 +9,12 @@ const Fabric = require("./fabric");
 const { fromBuffer } = require("../helpers");
 
 module.exports = class UserServices {
-  static async login(login, password) {
+  static async login(login, password, org = ORGS.Users) {
     try {
-      await Fabric.loginIdentity(login, password, ORGS.Users);
+      await Fabric.loginIdentity(login, password, org);
 
-      const wallet = await Fabric.createWallet(ORGS.Users, login);
-      const gateway = await Fabric.createGateway(wallet, login, ORGS.Users);
+      const wallet = await Fabric.createWallet(org, login);
+      const gateway = await Fabric.createGateway(wallet, login, org);
       const contract = await Fabric.getContract(
         gateway,
         CHANNEL,
@@ -27,7 +27,7 @@ module.exports = class UserServices {
       );
       if (userData) {
         gateway.disconnect();
-        const user = fromBuffer(userData);
+        const user = await fromBuffer(userData);
         return user;
       }
       throw "User not registered or wrong password";

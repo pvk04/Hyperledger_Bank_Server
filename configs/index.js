@@ -1,5 +1,5 @@
-const CHANNEL = "wsr2022";
-const CHAINCODE = "test";
+const CHANNEL = "wsr202";
+const CHAINCODE = "test1";
 const CONTRACTS = {
   USERS: "UsersContract",
   SHOPS: "ShopContract",

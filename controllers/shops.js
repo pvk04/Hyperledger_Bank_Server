@@ -3,9 +3,7 @@ const ShopServices = require("../services/shop");
 module.exports = class ShopsControllers {
   static async getShops(req, res, next) {
     try {
-      const { org, login } = req.body;
-
-      const shops = await ShopServices.getShops(org, login);
+      const shops = await ShopServices.getShops();
 
       res.json(shops);
     } catch (e) {
@@ -29,7 +27,19 @@ module.exports = class ShopsControllers {
 
       res.json(shops);
     } catch (e) {
-      console.log(e);
+      next(e);
+    }
+  }
+
+  static async likeRate(req, res, next) {
+    try {
+      const { shopId, login, rateId, isLike } = req.body;
+
+      const shops = await ShopServices.likeRate(shopId, login, rateId, isLike);
+
+      res.json(shops);
+    } catch (e) {
+      next(e);
     }
   }
 };

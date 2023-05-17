@@ -3,6 +3,7 @@ const { json } = require("express");
 const Fabric = require("./services/fabric");
 const cors = require("cors");
 const {
+  ORGS,
   CHANNEL,
   CHAINCODE,
   CONTRACTS,
@@ -22,6 +23,7 @@ app.listen(PORT, async () => {
   console.log(`SERVER RUNNING ON PORT: ${PORT}`);
 
   try {
+    // init contracts
     await Fabric.loginIdentity("admin", "adminpw", "org1");
     const wallet = await Fabric.createWallet("org1", "admin");
     const gateway = await Fabric.createGateway(wallet, "admin", "org1");
@@ -46,6 +48,10 @@ app.listen(PORT, async () => {
       CONTRACTS.REQUESTS
     );
     await requests.submitTransaction(TRANSACTIONS.REQUESTS.INIT);
+
+    // create shop accounts
+    // await Fabric.registerIdentity("0", "0000", ORGS.SHOPS);
+
     console.log("SUCCESS");
   } catch (e) {
     console.log(e);

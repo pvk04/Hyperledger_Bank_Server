@@ -34,7 +34,7 @@ module.exports = class ShopsControllers {
   static async likeRate(req, res, next) {
     try {
       const { shopId, login, rateId, isLike } = req.body;
-
+      
       const shops = await ShopServices.likeRate(shopId, login, rateId, isLike);
 
       res.json(shops);

@@ -25,9 +25,10 @@ module.exports = class UserServices {
         TRANSACTIONS.USERS.GET_USER,
         login
       );
+
       if (userData) {
         gateway.disconnect();
-        const user = await fromBuffer(userData);
+        const user = fromBuffer(userData);
         return user;
       }
       throw "User not registered or wrong password";

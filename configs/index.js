@@ -1,11 +1,11 @@
 const CHANNEL = "wsr2022";
-const CHAINCODE = "test";
+const CHAINCODE = "test1";
 const CONTRACTS = {
   USERS: "UsersContract",
   SHOPS: "ShopContract",
   REQUESTS: "RequestsContract",
 };
-const PORT = 5000;
+const PORT = 5001;
 const TRANSACTIONS = {
   USERS: {
     INIT: "initContract",

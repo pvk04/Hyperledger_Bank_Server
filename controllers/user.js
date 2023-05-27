@@ -24,4 +24,38 @@ module.exports = class UserControllers {
       next(e);
     }
   }
+
+  static async setRequest(req, res, next) {
+    try {
+      const { login, role, shopId } = req.body;
+
+      const requests = await UserServices.setRequest(login, role, shopId);
+
+      res.json(requests);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async getRequests(req, res, next) {
+    try {
+      const requests = await UserServices.getRequests();
+
+      res.json(requests);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async answerRequest(req, res, next) {
+    try {
+      const { login, id, answer } = req.body;
+
+      const requests = await UserServices.answerRequest(login, id, answer);
+
+      res.json(requests);
+    } catch (e) {
+      next(e);
+    }
+  }
 };

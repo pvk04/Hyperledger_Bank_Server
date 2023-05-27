@@ -49,6 +49,16 @@ app.listen(PORT, async () => {
     // );
     // await requests.submitTransaction(TRANSACTIONS.REQUESTS.INIT);
 
+    // admin in contract;
+    // await Fabric.registerIdentity("adm", "0000", ORGS.Users);
+    // await Fabric.loginIdentity("adm", "0000", "org1");
+    // await Fabric.createWallet(ORGS.Users, "adm");
+
+    // unauth
+    // await Fabric.registerIdentity("unauthorized", "0000", ORGS.Users);
+    // await Fabric.loginIdentity("unauthorized", "0000", "org1");
+    // await Fabric.createWallet(ORGS.Users, "unauthorized");
+
     // create shop accounts
     // await Fabric.registerIdentity("0", "0000", ORGS.SHOPS);
 

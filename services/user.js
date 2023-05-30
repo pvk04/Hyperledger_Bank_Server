@@ -63,6 +63,27 @@ module.exports = class UserServices {
     }
   }
 
+  static async getUsers() {
+    const org = ORGS.Users;
+    const login = "unauthorized";
+    const wallet = await Fabric.createWallet(org, login);
+    const gateway = await Fabric.createGateway(wallet, login, org);
+    const contract = await Fabric.getContract(
+      gateway,
+      CHANNEL,
+      CHAINCODE,
+      CONTRACTS.USERS
+    );
+    const userData = await contract.submitTransaction(
+      TRANSACTIONS.USERS.GET_USERS
+    );
+    if (userData) {
+      gateway.disconnect();
+      const user = fromBuffer(userData);
+      return user;
+    }
+  }
+
   static async getRequests() {
     try {
       const org = ORGS.Users;

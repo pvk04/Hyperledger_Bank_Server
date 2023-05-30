@@ -23,7 +23,7 @@ app.listen(PORT, async () => {
   console.log(`SERVER RUNNING ON PORT: ${PORT}`);
 
   try {
-    // init contracts
+    // // init contracts
     // await Fabric.loginIdentity("admin", "adminpw", "org1");
     // const wallet = await Fabric.createWallet("org1", "admin");
     // const gateway = await Fabric.createGateway(wallet, "admin", "org1");
@@ -49,12 +49,12 @@ app.listen(PORT, async () => {
     // );
     // await requests.submitTransaction(TRANSACTIONS.REQUESTS.INIT);
 
-    // admin in contract;
+    // // admin in contract;
     // await Fabric.registerIdentity("adm", "0000", ORGS.Users);
     // await Fabric.loginIdentity("adm", "0000", "org1");
     // await Fabric.createWallet(ORGS.Users, "adm");
 
-    // unauth
+    // // unauth
     // await Fabric.registerIdentity("unauthorized", "0000", ORGS.Users);
     // await Fabric.loginIdentity("unauthorized", "0000", "org1");
     // await Fabric.createWallet(ORGS.Users, "unauthorized");

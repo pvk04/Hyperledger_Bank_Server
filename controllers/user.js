@@ -25,6 +25,16 @@ module.exports = class UserControllers {
     }
   }
 
+  static async getUsers(req, res, next) {
+    try {
+      const users = await UserServices.getUsers();
+
+      res.json(users);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   static async setRequest(req, res, next) {
     try {
       const { login, role, shopId } = req.body;

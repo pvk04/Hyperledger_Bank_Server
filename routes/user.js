@@ -5,6 +5,7 @@ const userRouter = Router();
 
 userRouter.post("/login", UserControllers.login);
 userRouter.post("/registration", UserControllers.registration);
+userRouter.get("/getUsers", UserControllers.getUsers);
 userRouter.post("/setRequest", UserControllers.setRequest);
 userRouter.get("/getRequests", UserControllers.getRequests);
 userRouter.post("/answerRequest", UserControllers.answerRequest);
